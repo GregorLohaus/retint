@@ -2,7 +2,8 @@ use std::io::{Write, Stdout};
 use crate::gamestate::{Board};
 use rand::Rng;
 use crossterm::{
-  QueueableCommand, ExecutableCommand, Result, cursor, 
+  QueueableCommand, ExecutableCommand, Result, 
+  cursor::{self,Hide}, 
   terminal::{Clear, ClearType,size},
   style::{Stylize,PrintStyledContent}, 
 };
@@ -14,6 +15,7 @@ pub fn draw(stdout: &mut Stdout,board:Board ) -> Result<()> {
 
 pub fn draw_background(stdout: &mut Stdout) -> Result<()> {
     stdout.queue(Clear(ClearType::All))?;
+    stdout.queue(Hide)?;
     let out:String = String::from("██");
     let xoffset = (size().unwrap().0-10*2)/2;
     let yoffset = (size().unwrap().1-20)/2;
