@@ -81,7 +81,7 @@ struct Tetromino {
 
 trait TetorMinoBuilder {
     //create new Tetromino in its spawn state
-    fn new<'a>()-> Tetromino;
+    fn new()-> Tetromino;
 }
 struct I;
 impl TetorMinoBuilder for I {
