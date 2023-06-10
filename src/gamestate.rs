@@ -1,14 +1,27 @@
-
+extern crate nalgebra as na;
+use na::{Matrix2,Matrix2x1};
 #[derive(Clone)]
 #[derive(Copy)]
-enum SquareState {
-    Filled(bool),
+enum Color {
+    Cyan,
+    Yellow,
+    Purple,
+    Green,
+    Blue,
+    Red,
+    Orange,
+    None
 }
 
 #[derive(Clone)]
 #[derive(Copy)]
+enum SquareState {
+    Filled(bool,Color),
+}
+
+
 pub struct Board {
-    board: [[SquareState;10];20],
+    grid: [[SquareState;10];20],
     scalex: u8,
     scaley: u8,
     size: u8,
@@ -17,7 +30,7 @@ pub struct Board {
 impl Board {
     fn new(&mut self)->Board {
         let mut board = Board { 
-            board : [[SquareState::Filled(false);10];20], 
+            grid : [[SquareState::Filled(false,Color::None);10];20], 
             scalex : 2,
             scaley : 1,
             size : 30
@@ -26,6 +39,10 @@ impl Board {
     }
 
     fn set_square_state(&mut self,x:usize,y:usize,state:SquareState) {
-        self.board[y][x] = state;
+        self.grid[y][x] = state;
     }
+}
+
+pub struct State {
+    board: Board,
 }

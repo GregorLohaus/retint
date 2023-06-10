@@ -1,5 +1,5 @@
 [package]
-name = "retris"
+name = "retint"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 crossterm = "0.26.1"
+nalgebra = "0.32.2"
 rand = "0.8.5"
