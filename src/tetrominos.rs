@@ -71,34 +71,34 @@ impl Tile {
 }
 
 
-struct Tetromino<'a> {
+struct Tetromino {
     kind: TetrominoType,
     global_origintile_position: Matrix1x2<u8>,
-    tiles: [&'a Tile;5],
+    tiles: [Tile;5],
     rotation_state: RotationState,
     kick_data: KickData
 }
 
 trait TetorMinoBuilder {
     //create new Tetromino in its spawn state
-    fn new<'a>()-> Box<Tetromino<'a>>;
+    fn new<'a>()-> Tetromino;
 }
 struct I;
 impl TetorMinoBuilder for I {
-    fn new<'a>() -> Box<Tetromino<'a>> {
+    fn new() -> Tetromino {
         let tetromino = Tetromino {
             kind: TetrominoType::I,
             global_origintile_position: Matrix1x2::new(5,0),
             tiles: [ 
-                &Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
-                &Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),true),
-                &Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
-                &Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
-                &Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
+                Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
+                Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),true),
+                Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
+                Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
+                Tile::new(Matrix1x2::new(-1,0),Matrix1x2::new(4,0),false),
             ],
             kick_data: KickData::I,
             rotation_state: RotationState::Spawn
         };
-        return Box::new(tetromino);
+        return tetromino;
     }
 }
