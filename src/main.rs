@@ -1,17 +1,24 @@
-mod renderer;
 mod gamestate;
+mod renderer;
 mod tetrominos;
-use std::{io::stdout, time::{Instant, Duration}, error::Error};
+use std::{
+    env,
+    error::Error,
+    io::stdout,
+    time::{Duration, Instant},
+};
 #[macro_use]
 extern crate crossterm;
 use crossterm::{
+    cursor::{Hide, MoveTo, Show},
+    event::{poll, read, Event, KeyCode, KeyEvent, KeyEventKind, KeyEventState, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
-    cursor::{Hide,Show,MoveTo},
-    event::{read, poll,Event, KeyCode, KeyEvent, KeyModifiers, KeyEventKind, KeyEventState},
 };
 fn main() {
+    let args: Vec<String> = env::args().collect();
     let clock = Instant::now();
     let mut stdout = stdout();
+    let mut state = gamestate::create_state();
     enable_raw_mode().unwrap();
     execute!(stdout, Hide).unwrap();
     let mut previous: u128 = 0;
@@ -19,15 +26,15 @@ fn main() {
         //going to top left corner
         let now = clock.elapsed().as_millis();
         if now - previous > 16 {
-            match renderer::draw_demo(&mut stdout) {
+            match renderer::draw(&mut stdout, &state) {
                 Ok(_o) => (),
-                Err(_e) => break
+                Err(_e) => break,
             };
             previous = now;
         }
         match poll(Duration::from_millis(1)) {
             //matching the key
-            Ok(t) => 
+            Ok(t) => {
                 if t {
                     match read().unwrap() {
                         //i think this speaks for itself
@@ -35,17 +42,17 @@ fn main() {
                             code: KeyCode::Char('q'),
                             modifiers: KeyModifiers::CONTROL,
                             kind: KeyEventKind::Press,
-                            state: KeyEventState::NONE
+                            state: KeyEventState::NONE,
                         }) => break,
                         _ => (),
                     }
                 }
-            Err(_e) => ()
+            }
+            Err(_e) => (),
         }
-
     }
     execute!(stdout, Clear(ClearType::All)).unwrap();
-    execute!(stdout, MoveTo(0,0)).unwrap();
+    execute!(stdout, MoveTo(0, 0)).unwrap();
     disable_raw_mode().unwrap();
     execute!(stdout, Show).unwrap();
 }
