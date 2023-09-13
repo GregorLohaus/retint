@@ -1,7 +1,7 @@
 use crate::gamestate::State;
 use crossterm::{
     cursor,
-    style::{Color, PrintStyledContent, Stylize},
+    style::{Color, Print, PrintStyledContent, Stylize},
     terminal::{size, Clear, ClearType},
     ExecutableCommand, QueueableCommand, Result,
 };
@@ -26,13 +26,23 @@ pub fn draw_state(stdout: &mut Stdout, state: &State) -> Result<()> {
     for (yindex, row) in state.board.iter().enumerate() {
         for (xindex, block) in row.iter().enumerate() {
             // dbg!(block);
-            let x_scaled = xindex * state.scalex + usize::try_from(xoffset).unwrap() - 2;
+            let x_scaled = xindex * state.scalex + usize::try_from(xoffset).unwrap();
             stdout.queue(cursor::MoveTo(
                 x_scaled.try_into().unwrap(),
                 u16::try_from(yindex).unwrap() + yoffset,
             ))?;
-            stdout.queue(PrintStyledContent(out.clone().with(block.color)))?;
+            match (stdout.queue(PrintStyledContent(out.clone().with(block.color)))) {
+                Ok(_t) => {
+                    stdout.flush();
+                    0
+                }
+                Err(e) => {
+                    dbg!(e);
+                    1
+                }
+            };
         }
+        stdout.queue(Print(yindex));
     }
     Ok(())
 }

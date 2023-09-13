@@ -26,7 +26,7 @@ fn main() {
     loop {
         //going to top left corner
         let now = clock.elapsed().as_millis();
-        if now - previous > 1000 {
+        if now - previous > 3000 {
             match renderer::draw(&mut stdout, &state) {
                 Ok(_o) => (),
                 Err(_e) => break,
