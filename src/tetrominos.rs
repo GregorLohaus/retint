@@ -1,6 +1,6 @@
 use crossterm::style::Color;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Block {
     //position inside tetromino boundingbox
     pub x: u32,

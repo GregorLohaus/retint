@@ -22,10 +22,11 @@ fn main() {
     enable_raw_mode().unwrap();
     execute!(stdout, Hide).unwrap();
     let mut previous: u128 = 0;
+    // renderer::draw(&mut stdout, &state);
     loop {
         //going to top left corner
         let now = clock.elapsed().as_millis();
-        if now - previous > 16 {
+        if now - previous > 1000 {
             match renderer::draw(&mut stdout, &state) {
                 Ok(_o) => (),
                 Err(_e) => break,
@@ -51,8 +52,8 @@ fn main() {
             Err(_e) => (),
         }
     }
-    execute!(stdout, Clear(ClearType::All)).unwrap();
-    execute!(stdout, MoveTo(0, 0)).unwrap();
-    disable_raw_mode().unwrap();
-    execute!(stdout, Show).unwrap();
+    // execute!(stdout, Clear(ClearType::All)).unwrap();
+    // execute!(stdout, MoveTo(0, 0)).unwrap();
+    // disable_raw_mode().unwrap();
+    // execute!(stdout, Show).unwrap();
 }
