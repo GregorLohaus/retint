@@ -4,7 +4,7 @@ mod tetrominos;
 use std::{
     env,
     error::Error,
-    io::stdout,
+    io::{stdout, Write},
     time::{Duration, Instant},
 };
 #[macro_use]
@@ -28,7 +28,7 @@ fn main() {
         let now = clock.elapsed().as_millis();
         if now - previous > 3000 {
             match renderer::draw(&mut stdout, &state) {
-                Ok(_o) => (),
+                Ok(_o) => stdout.flush(),
                 Err(_e) => break,
             };
             previous = now;
