@@ -17,7 +17,8 @@ pub fn draw_state(stdout: &mut Stdout, state: &State) -> Result<()> {
     stdout.queue(Clear(ClearType::All))?;
     stdout.queue(Clear(ClearType::Purge))?;
     stdout.queue(cursor::MoveTo(0, 0))?;
-    let out = String::from("█").repeat(state.scalex);
+    let mut out = String::from("▇").repeat(state.scalex - 1);
+    out.push_str("▉");
     // let out: String = String::from("██");
     let xoffset = (size().unwrap().0 - 10 * 2) / 2;
     let yoffset = (size().unwrap().1 - 20) / 2;
@@ -31,16 +32,9 @@ pub fn draw_state(stdout: &mut Stdout, state: &State) -> Result<()> {
                 x_scaled.try_into().unwrap(),
                 u16::try_from(yindex).unwrap() + yoffset,
             ))?;
-            match (stdout.queue(PrintStyledContent(out.clone().with(block.color)))) {
-                Ok(_t) => {
-                    stdout.flush();
-                    0
-                }
-                Err(e) => {
-                    dbg!(e);
-                    1
-                }
-            };
+            stdout.queue(PrintStyledContent(
+                out.clone().with(block.color).underline(Color::Black),
+            ))?;
         }
         stdout.queue(Print(yindex));
     }

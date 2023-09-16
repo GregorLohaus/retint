@@ -1,9 +1,19 @@
 use crate::tetrominos::Block;
-use crossterm::{event::KeyEvent, style::Color};
+use crossterm::style::Color;
+
+pub enum Action {
+    Hold,
+    RotateR,
+    RotateL,
+    SoftDrop,
+    HardDrop,
+    Flip,
+}
+
 pub struct State {
     pub board: [[Block; 10]; 20],
     pub scalex: usize,
-    pub eventqueue: Vec<KeyEvent>,
+    pub eventqueue: Vec<Action>,
 }
 
 pub fn create_state() -> State {

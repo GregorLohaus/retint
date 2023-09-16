@@ -1,4 +1,5 @@
 mod gamestate;
+mod mutator;
 mod renderer;
 mod tetrominos;
 use std::{
@@ -14,6 +15,7 @@ use crossterm::{
     event::{poll, read, Event, KeyCode, KeyEvent, KeyEventKind, KeyEventState, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
 };
+use mutator::mutate;
 fn main() {
     let args: Vec<String> = env::args().collect();
     let clock = Instant::now();
@@ -26,6 +28,10 @@ fn main() {
     loop {
         //going to top left corner
         let now = clock.elapsed().as_millis();
+        mutate(
+            &mut state,
+            Duration::from_millis((now - previous).try_into().unwrap()),
+        );
         if now - previous > 3000 {
             match renderer::draw(&mut stdout, &state) {
                 Ok(_o) => stdout.flush(),
@@ -45,6 +51,12 @@ fn main() {
                             kind: KeyEventKind::Press,
                             state: KeyEventState::NONE,
                         }) => break,
+                        Event::Key(KeyEvent {
+                            code: KeyCode::Char('o'),
+                            modifiers: KeyModifiers::NONE,
+                            kind: KeyEventKind::Press,
+                            state: KeyEventState::NONE,
+                        }) => state.eventqueue.push(gamestate::Action::RotateR),
                         _ => (),
                     }
                 }
