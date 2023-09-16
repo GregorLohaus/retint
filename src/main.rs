@@ -14,8 +14,31 @@ use crossterm::{
     cursor::{Hide, MoveTo, Show},
     event::{poll, read, Event, KeyCode, KeyEvent, KeyEventKind, KeyEventState, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
+    ExecutableCommand, QueueableCommand,
 };
 use mutator::mutate;
+macro_rules! key_press {
+    ($c:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($c),
+            modifiers: KeyModifiers::CONTROL,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::NONE,
+        })
+    };
+}
+
+macro_rules! key_release {
+    ($c:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($c),
+            modifiers: KeyModifiers::CONTROL,
+            kind: KeyEventKind::Release,
+            state: KeyEventState::NONE,
+        })
+    };
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let clock = Instant::now();
@@ -24,6 +47,7 @@ fn main() {
     enable_raw_mode().unwrap();
     execute!(stdout, Hide).unwrap();
     let mut previous: u128 = 0;
+    stdout.queue(Clear(ClearType::All));
     // renderer::draw(&mut stdout, &state);
     loop {
         //going to top left corner
@@ -32,9 +56,12 @@ fn main() {
             &mut state,
             Duration::from_millis((now - previous).try_into().unwrap()),
         );
-        if now - previous > 3000 {
+        if now - previous > 16 {
             match renderer::draw(&mut stdout, &state) {
-                Ok(_o) => stdout.flush(),
+                Ok(_o) => match stdout.flush() {
+                    Ok(_o) => (),
+                    Err(_e) => (),
+                },
                 Err(_e) => break,
             };
             previous = now;
@@ -45,18 +72,12 @@ fn main() {
                 if t {
                     match read().unwrap() {
                         //i think this speaks for itself
-                        Event::Key(KeyEvent {
-                            code: KeyCode::Char('q'),
-                            modifiers: KeyModifiers::CONTROL,
-                            kind: KeyEventKind::Press,
-                            state: KeyEventState::NONE,
-                        }) => break,
-                        Event::Key(KeyEvent {
-                            code: KeyCode::Char('o'),
-                            modifiers: KeyModifiers::NONE,
-                            kind: KeyEventKind::Press,
-                            state: KeyEventState::NONE,
-                        }) => state.eventqueue.push(gamestate::Action::RotateR),
+                        key_press!('q') => break,
+                        key_press!('o') => state.eventqueue.push(gamestate::Action::RotateR),
+                        key_press!('k') => state.eventqueue.push(gamestate::Action::RotateL),
+                        key_press!('p') => state.eventqueue.push(gamestate::Action::Flip),
+                        key_press!('a') => state.eventqueue.push(gamestate::Action::MoveLeftA),
+                        key_release!('a') => state.eventqueue.push(gamestate::Action::MoveLeftD),
                         _ => (),
                     }
                 }

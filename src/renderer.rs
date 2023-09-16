@@ -14,9 +14,9 @@ pub fn draw(stdout: &mut Stdout, state: &State) -> Result<()> {
 }
 
 pub fn draw_state(stdout: &mut Stdout, state: &State) -> Result<()> {
-    stdout.queue(Clear(ClearType::All))?;
-    stdout.queue(Clear(ClearType::Purge))?;
-    stdout.queue(cursor::MoveTo(0, 0))?;
+    // stdout.queue(Clear(ClearType::All))?;
+    // stdout.queue(Clear(ClearType::Purge))?;
+    // stdout.queue(cursor::MoveTo(0, 0))?;
     let mut out = String::from("▇").repeat(state.scalex - 1);
     out.push_str("▉");
     // let out: String = String::from("██");

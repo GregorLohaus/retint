@@ -3,8 +3,8 @@ use crossterm::style::Color;
 #[derive(Clone, Copy, Debug)]
 pub struct Block {
     //position inside tetromino boundingbox
-    pub x: u32,
-    pub y: u32,
+    pub x: usize,
+    pub y: usize,
     pub color: Color,
 }
 
@@ -12,11 +12,11 @@ pub struct Tetromino {
     tetromino_type: TetrominoType,
     blocks: [Block; 5],
     //bounding box width and height
-    width: u8,
-    height: u8,
+    width: usize,
+    height: usize,
     //startposition of boundingbox
-    x: u8,
-    y: u8,
+    x: usize,
+    y: usize,
 }
 
 pub enum TetrominoType {
@@ -27,43 +27,44 @@ pub enum TetrominoType {
     S,
     Z,
 }
-
-pub fn create_tetromino(t: TetrominoType) -> Result<Tetromino, &'static str> {
-    match t {
-        TetrominoType::J => Ok(Tetromino {
-            tetromino_type: TetrominoType::J,
-            blocks: [
-                Block {
-                    x: 0,
-                    y: 0,
-                    color: Color::Red,
-                },
-                Block {
-                    x: 0,
-                    y: 1,
-                    color: Color::Red,
-                },
-                Block {
-                    x: 1,
-                    y: 2,
-                    color: Color::Red,
-                },
-                Block {
-                    x: 2,
-                    y: 2,
-                    color: Color::Red,
-                },
-                Block {
-                    x: 3,
-                    y: 4,
-                    color: Color::Red,
-                },
-            ],
-            width: 4,
-            height: 4,
-            x: 0,
-            y: 0,
-        }),
-        _ => Err("Todo"),
+impl Tetromino {
+    pub fn new(t: TetrominoType) -> Result<Tetromino, &'static str> {
+        match t {
+            TetrominoType::J => Ok(Tetromino {
+                tetromino_type: TetrominoType::J,
+                blocks: [
+                    Block {
+                        x: 0,
+                        y: 0,
+                        color: Color::Red,
+                    },
+                    Block {
+                        x: 0,
+                        y: 1,
+                        color: Color::Red,
+                    },
+                    Block {
+                        x: 1,
+                        y: 2,
+                        color: Color::Red,
+                    },
+                    Block {
+                        x: 2,
+                        y: 2,
+                        color: Color::Red,
+                    },
+                    Block {
+                        x: 3,
+                        y: 4,
+                        color: Color::Red,
+                    },
+                ],
+                width: 4,
+                height: 4,
+                x: 0,
+                y: 0,
+            }),
+            _ => Err("Todo"),
+        }
     }
 }
