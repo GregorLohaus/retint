@@ -3,6 +3,8 @@ use std::time::{Duration, Instant};
 
 use crate::tetrominos::{Block, Tetromino, TetrominoType};
 use crossterm::style::Color;
+use crate::block;
+
 #[derive(Debug)]
 pub enum Action {
     Hold,
@@ -55,24 +57,16 @@ pub struct State {
     pub lastMRA: Option<Instant>,
     pub active_tetromino: Option<Tetromino>,
     pub held_tetromino: Option<Tetromino>,
-
+    pub tetromino_x_log: Vec<usize>,
     pub last_active_tetromino_block_positions: Option<[[usize; 2]; 5]>,
 }
 
 impl State {
     pub fn new() -> State {
-        let mut board = [[Block {
-            x: 0,
-            y: 0,
-            color: Color::Black,
-        }; 10]; 20];
+        let mut board = [[block!(0,0,Color::Black);10];20];
         for i in 0..=19 {
             for n in 0..=9 {
-                board[i][n] = Block {
-                    x: n,
-                    y: i,
-                    color: Color::White,
-                };
+                board[i][n] = block!(n,i,Color::White);
             }
         }
         State {
@@ -88,6 +82,7 @@ impl State {
             active_tetromino: Option::None,
             held_tetromino: Option::None,
             last_active_tetromino_block_positions: None,
+            tetromino_x_log: vec![]
         }
     }
 
@@ -102,7 +97,9 @@ impl State {
         match self.active_tetromino.as_ref() {
             Some(tetromino) => {
                 for block in tetromino.blocks {
-                    self.board[block.y + tetromino.y][block.x + tetromino.x].color = block.color;
+                    let y = block.get_y() + tetromino.get_y();
+                    let x = block.get_x() + tetromino.get_x();
+                    self.board[y][x].color = block.color;
                 }
             }
             None => (),
@@ -110,19 +107,15 @@ impl State {
     }
 
     fn save_active_tetromino_block_positions(&mut self) {
-        match self.last_active_tetromino_block_positions {
-            None => self.last_active_tetromino_block_positions = Some([[0; 2]; 5]),
-            Some(_) => (),
-        }
-
         match self.active_tetromino.as_ref() {
             Some(t) => {
+                let mut last_active_tetromino_block_positions = [[0;2];5];
                 for i in 0..t.blocks.len() {
-                    self.last_active_tetromino_block_positions.unwrap()[i] =
-                        [t.blocks[i].x, t.blocks[i].y]
+                    last_active_tetromino_block_positions[i] = [t.blocks[i].get_x() + t.get_x(), t.blocks[i].get_y() + t.get_y()];
                 }
-            }
-            None => (),
+                self.last_active_tetromino_block_positions = Some(last_active_tetromino_block_positions);
+            },
+            None => ()
         }
     }
 
@@ -136,36 +129,30 @@ impl State {
             }
         }
     }
-
+    //TODO cast left ray
     pub fn move_left(&mut self) {
-        if let Some(mut t) = self.active_tetromino {
-            if t.x > 0 {
-                t.x -= 1;
-                self.save_active_tetromino_block_positions();
-                self.active_tetromino = Some(t);
+        if let Some(ref mut t) = &mut self.active_tetromino {
+            self.save_active_tetromino_block_positions();
+        }
+        if let Some(ref mut t) = &mut self.active_tetromino {
+            if t.get_x() > 0 {
+                let x = t.get_x();
+                t.set_x(x -1);
                 self.clear_last_drawn_blocks();
                 self.tetromino_to_board();
             }
         }
-        // match self.active_tetromino.as_mut() {
-        //     Some(t) => {
-        //         if t.x > 0 {
-        //             (*t).x -= 1;
-        //             self.save_active_tetromino_block_positions();
-        //             self.clear_last_drawn_blocks();
-        //             self.tetromino_to_board();
-        //         }
-        //     }
-        //     None => (),
-        // }
     }
-
+    //TODO cast right ray
     pub fn move_right(&mut self) {
-        if let Some(mut t) = self.active_tetromino {
-            if t.max_x() < 10 {
-                t.x += 1;
-                self.save_active_tetromino_block_positions();
-                self.active_tetromino = Some(t);
+        if let Some(ref mut t) = &mut self.active_tetromino {
+            self.save_active_tetromino_block_positions();
+        }
+        if let Some(ref mut t) = &mut self.active_tetromino {
+            let mx = t.max_x();
+            if mx < 9 {
+                let x = t.get_x();
+                t.set_x(x + 1);
                 self.clear_last_drawn_blocks();
                 self.tetromino_to_board();
             }

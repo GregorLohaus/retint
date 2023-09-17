@@ -8,16 +8,41 @@ pub struct Block {
     pub color: Color,
 }
 
-#[derive(Clone, Copy, Debug)]
+impl Block {
+    pub fn set_x(&mut self, x:usize) {
+        self.x = x;
+    }
+
+    pub fn set_y(&mut self, y:usize) {
+        self.y = y;
+    }
+
+    pub fn get_x(&self)->usize {
+        self.x
+    }
+
+    pub fn get_y(&self)->usize {
+        self.y
+    }
+}
+#[macro_export]
+macro_rules! block {
+    ($x:expr,$y:expr,$color:expr) => {
+        Block {
+            x: $x,
+            y: $y,
+            color: $color
+        }
+    };
+}
 pub struct Tetromino {
     pub tetromino_type: TetrominoType,
     pub blocks: [Block; 5],
-    //bounding box width and height
-    pub width: usize,
-    pub height: usize,
     //startposition of boundingbox
-    pub x: usize,
-    pub y: usize,
+    x: usize,
+    y: usize,
+    xlog: Vec<usize>,
+    ylog: Vec<usize>
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -37,45 +62,42 @@ impl Tetromino {
             _ => Tetromino {
                 tetromino_type: TetrominoType::J,
                 blocks: [
-                    Block {
-                        x: 0,
-                        y: 0,
-                        color: Color::Red,
-                    },
-                    Block {
-                        x: 0,
-                        y: 1,
-                        color: Color::Red,
-                    },
-                    Block {
-                        x: 1,
-                        y: 1,
-                        color: Color::Red,
-                    },
-                    Block {
-                        x: 2,
-                        y: 1,
-                        color: Color::Red,
-                    },
-                    Block {
-                        x: 3,
-                        y: 1,
-                        color: Color::Red,
-                    },
+                    block!(0,0,Color::Red),
+                    block!(0,1,Color::Red),
+                    block!(1,1,Color::Red),
+                    block!(2,1,Color::Red),
+                    block!(3,1,Color::Red)
                 ],
-                width: 4,
-                height: 4,
                 x: 0,
                 y: 0,
+                xlog: vec![],
+                ylog: vec![]
             },
         }
+    }
+    pub fn set_x(&mut self, x:usize) {
+        self.xlog.push(self.x);
+        self.x = x;
+    }
+
+    pub fn set_y(&mut self, y:usize) {
+        self.ylog.push(self.y);
+        self.y = y;
+    }
+
+    pub fn get_x(&self)->usize {
+        self.x
+    }
+
+    pub fn get_y(&self)->usize {
+        self.y
     }
 
     pub fn max_x(&self) -> usize {
         let mut max = 0;
         for block in self.blocks {
-            if block.x > max {
-                max = block.x
+            if block.x + self.x > max {
+                max = block.x + self.x
             }
         }
         max
@@ -83,8 +105,8 @@ impl Tetromino {
     pub fn max_y(&self) -> usize {
         let mut max = 0;
         for block in self.blocks {
-            if block.y > max {
-                max = block.y
+            if block.y + self.y > max {
+                max = block.y + self.y
             }
         }
         max

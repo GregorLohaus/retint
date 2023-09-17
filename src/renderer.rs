@@ -16,7 +16,6 @@ pub fn draw(stdout: &mut Stdout, state: &State) -> Result<()> {
 pub fn draw_state(stdout: &mut Stdout, state: &State) -> Result<()> {
     // stdout.queue(Clear(ClearType::All))?;
     // stdout.queue(Clear(ClearType::Purge))?;
-    debug_info(stdout, state);
     let mut out = String::from("▇").repeat(state.scalex - 1);
     out.push_str("▉");
     // let out: String = String::from("██");
@@ -41,24 +40,6 @@ pub fn draw_state(stdout: &mut Stdout, state: &State) -> Result<()> {
     Ok(())
 }
 
-pub fn debug_info(stdout: &mut Stdout, state: &State) -> Result<()> {
-    stdout.queue(cursor::MoveTo(0, 0))?;
-    if let Some(t) = state.active_tetromino {
-        stdout.write(format!("x(t):{}", t.x).as_bytes())?;
-    }
-    stdout.queue(cursor::MoveTo(0, 1))?;
-    if let Some(t) = state.active_tetromino {
-        stdout.write(format!("y(t):{}", t.y).as_bytes())?;
-    }
-    stdout.queue(cursor::MoveTo(0, 2))?;
-    // if let Some(t) = state.last_active_tetromino_block_positions {
-    //     stdout.write(format!("y(t):{:#}", t).as_bytes())?;
-    // }
-    // if let Some(t) = state.active_tetromino {
-    //     stdout.write(format!("next:{}", state.eventqueue[0]).as_bytes());
-    // }
-    Ok(())
-}
 pub fn draw_blink_demo(stdout: &mut Stdout) -> Result<()> {
     stdout.queue(Clear(ClearType::All))?;
     stdout.queue(Clear(ClearType::Purge))?;
