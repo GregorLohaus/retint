@@ -7,5 +7,7 @@ use std::{
 
 pub fn mutate(state: &mut State, elapsed: Duration) {
     // return state;
-    state.scalex = 3;
+    // state.scalex = 3;
+    state.spawn_tetromino();
+    state.tetromino_to_board();
 }

@@ -9,14 +9,14 @@ pub struct Block {
 }
 
 pub struct Tetromino {
-    tetromino_type: TetrominoType,
-    blocks: [Block; 5],
+    pub tetromino_type: TetrominoType,
+    pub blocks: [Block; 5],
     //bounding box width and height
-    width: usize,
-    height: usize,
+    pub width: usize,
+    pub height: usize,
     //startposition of boundingbox
-    x: usize,
-    y: usize,
+    pub x: usize,
+    pub y: usize,
 }
 
 pub enum TetrominoType {
@@ -27,6 +27,7 @@ pub enum TetrominoType {
     S,
     Z,
 }
+
 impl Tetromino {
     pub fn new(t: TetrominoType) -> Result<Tetromino, &'static str> {
         match t {
@@ -45,17 +46,17 @@ impl Tetromino {
                     },
                     Block {
                         x: 1,
-                        y: 2,
+                        y: 1,
                         color: Color::Red,
                     },
                     Block {
                         x: 2,
-                        y: 2,
+                        y: 1,
                         color: Color::Red,
                     },
                     Block {
                         x: 3,
-                        y: 4,
+                        y: 1,
                         color: Color::Red,
                     },
                 ],
