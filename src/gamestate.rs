@@ -1,8 +1,9 @@
+use core::fmt;
 use std::time::{Duration, Instant};
 
 use crate::tetrominos::{Block, Tetromino, TetrominoType};
 use crossterm::style::Color;
-
+#[derive(Debug)]
 pub enum Action {
     Hold,
     RotateR,
@@ -15,6 +16,24 @@ pub enum Action {
     MoveLeftD,
     MoveRightA,
     MoverRightD,
+}
+
+impl fmt::Display for Action {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Action::Hold => write!(f, "Hold"),
+            Action::RotateR => write!(f, "RotateR"),
+            Action::RotateL => write!(f, "RotateL"),
+            Action::SoftDropA => write!(f, "SoftDropA"),
+            Action::SoftDropD => write!(f, "SoftDropD"),
+            Action::HardDrop => write!(f, "HardDrop"),
+            Action::Flip => write!(f, "Flip"),
+            Action::MoveLeftA => write!(f, "MoveLeftA"),
+            Action::MoveLeftD => write!(f, "MoveLeftD"),
+            Action::MoveRightA => write!(f, "MoveRightA"),
+            Action::MoverRightD => write!(f, "MoverRightD"),
+        }
+    }
 }
 
 pub struct State {
@@ -36,6 +55,8 @@ pub struct State {
     pub lastMRA: Option<Instant>,
     pub active_tetromino: Option<Tetromino>,
     pub held_tetromino: Option<Tetromino>,
+
+    last_active_tetromino_block_positions: Option<[[usize; 2]; 5]>,
 }
 
 impl State {
@@ -66,16 +87,14 @@ impl State {
             lastMRA: Option::None,
             active_tetromino: Option::None,
             held_tetromino: Option::None,
+            last_active_tetromino_block_positions: None,
         }
     }
 
     pub fn spawn_tetromino(&mut self) {
         match self.active_tetromino.as_ref() {
             Some(_t) => (),
-            None => match Tetromino::new(TetrominoType::J) {
-                Ok(t) => self.active_tetromino = Some(t),
-                Err(_) => (),
-            },
+            None => self.active_tetromino = Some(Tetromino::new(TetrominoType::J)),
         }
     }
 
@@ -87,6 +106,67 @@ impl State {
                 }
             }
             None => (),
+        }
+    }
+
+    fn save_active_tetromino_block_positions(&mut self) {
+        match self.last_active_tetromino_block_positions {
+            None => self.last_active_tetromino_block_positions = Some([[0; 2]; 5]),
+            Some(_) => (),
+        }
+
+        match self.active_tetromino.as_ref() {
+            Some(t) => {
+                for i in 0..t.blocks.len() {
+                    self.last_active_tetromino_block_positions.unwrap()[i] =
+                        [t.blocks[i].x, t.blocks[i].y]
+                }
+            }
+            None => (),
+        }
+    }
+
+    fn clear_last_drawn_blocks(&mut self) {
+        match self.last_active_tetromino_block_positions {
+            None => (),
+            Some(ap) => {
+                for p in ap {
+                    self.board[p[1]][p[0]].color = Color::White
+                }
+            }
+        }
+    }
+
+    pub fn move_left(&mut self) {
+        if let Some(mut t) = self.active_tetromino {
+            if t.x > 0 {
+                t.x -= 1;
+                self.save_active_tetromino_block_positions();
+                self.clear_last_drawn_blocks();
+                self.tetromino_to_board();
+            }
+        }
+        // match self.active_tetromino.as_mut() {
+        //     Some(t) => {
+        //         if t.x > 0 {
+        //             (*t).x -= 1;
+        //             self.save_active_tetromino_block_positions();
+        //             self.clear_last_drawn_blocks();
+        //             self.tetromino_to_board();
+        //         }
+        //     }
+        //     None => (),
+        // }
+    }
+
+    pub fn move_right(&mut self) {
+        if let Some(mut t) = self.active_tetromino {
+            if t.max_x() < 20 {
+                t.x += 1;
+                self.save_active_tetromino_block_positions();
+                self.clear_last_drawn_blocks();
+                self.tetromino_to_board();
+            }
         }
     }
 }

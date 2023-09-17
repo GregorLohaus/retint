@@ -8,6 +8,7 @@ pub struct Block {
     pub color: Color,
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct Tetromino {
     pub tetromino_type: TetrominoType,
     pub blocks: [Block; 5],
@@ -19,6 +20,7 @@ pub struct Tetromino {
     pub y: usize,
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum TetrominoType {
     I,
     T,
@@ -29,9 +31,10 @@ pub enum TetrominoType {
 }
 
 impl Tetromino {
-    pub fn new(t: TetrominoType) -> Result<Tetromino, &'static str> {
+    pub fn new(t: TetrominoType) -> Tetromino {
         match t {
-            TetrominoType::J => Ok(Tetromino {
+            //TetrominoType::J
+            _ => Tetromino {
                 tetromino_type: TetrominoType::J,
                 blocks: [
                     Block {
@@ -64,8 +67,26 @@ impl Tetromino {
                 height: 4,
                 x: 0,
                 y: 0,
-            }),
-            _ => Err("Todo"),
+            },
         }
+    }
+
+    pub fn max_x(&self) -> usize {
+        let mut max = 0;
+        for block in self.blocks {
+            if block.x > max {
+                max = block.x
+            }
+        }
+        max
+    }
+    pub fn max_y(&self) -> usize {
+        let mut max = 0;
+        for block in self.blocks {
+            if block.y > max {
+                max = block.y
+            }
+        }
+        max
     }
 }
