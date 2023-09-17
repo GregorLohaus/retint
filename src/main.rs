@@ -22,7 +22,7 @@ macro_rules! key_press {
     ($c:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($c),
-            modifiers: KeyModifiers::CONTROL,
+            modifiers: KeyModifiers::NONE,
             kind: KeyEventKind::Press,
             state: KeyEventState::NONE,
         })
@@ -33,7 +33,7 @@ macro_rules! key_release {
     ($c:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($c),
-            modifiers: KeyModifiers::CONTROL,
+            modifiers: KeyModifiers::NONE,
             kind: KeyEventKind::Release,
             state: KeyEventState::NONE,
         })
@@ -94,6 +94,6 @@ fn main() {
     }
     // execute!(stdout, Clear(ClearType::All)).unwrap();
     // execute!(stdout, MoveTo(0, 0)).unwrap();
-    // disable_raw_mode().unwrap();
-    // execute!(stdout, Show).unwrap();
+    disable_raw_mode().unwrap();
+    execute!(stdout, Show).unwrap();
 }

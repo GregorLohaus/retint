@@ -50,7 +50,10 @@ pub fn debug_info(stdout: &mut Stdout, state: &State) -> Result<()> {
     if let Some(t) = state.active_tetromino {
         stdout.write(format!("y(t):{}", t.y).as_bytes())?;
     }
-    stdout.queue(cursor::MoveTo(0, 0))?;
+    stdout.queue(cursor::MoveTo(0, 2))?;
+    // if let Some(t) = state.last_active_tetromino_block_positions {
+    //     stdout.write(format!("y(t):{:#}", t).as_bytes())?;
+    // }
     // if let Some(t) = state.active_tetromino {
     //     stdout.write(format!("next:{}", state.eventqueue[0]).as_bytes());
     // }

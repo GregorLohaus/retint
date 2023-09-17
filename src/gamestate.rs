@@ -1,4 +1,4 @@
-use core::fmt;
+use core::{fmt, panic};
 use std::time::{Duration, Instant};
 
 use crate::tetrominos::{Block, Tetromino, TetrominoType};
@@ -56,7 +56,7 @@ pub struct State {
     pub active_tetromino: Option<Tetromino>,
     pub held_tetromino: Option<Tetromino>,
 
-    last_active_tetromino_block_positions: Option<[[usize; 2]; 5]>,
+    pub last_active_tetromino_block_positions: Option<[[usize; 2]; 5]>,
 }
 
 impl State {
@@ -142,6 +142,7 @@ impl State {
             if t.x > 0 {
                 t.x -= 1;
                 self.save_active_tetromino_block_positions();
+                self.active_tetromino = Some(t);
                 self.clear_last_drawn_blocks();
                 self.tetromino_to_board();
             }
@@ -161,9 +162,10 @@ impl State {
 
     pub fn move_right(&mut self) {
         if let Some(mut t) = self.active_tetromino {
-            if t.max_x() < 20 {
+            if t.max_x() < 10 {
                 t.x += 1;
                 self.save_active_tetromino_block_positions();
+                self.active_tetromino = Some(t);
                 self.clear_last_drawn_blocks();
                 self.tetromino_to_board();
             }
