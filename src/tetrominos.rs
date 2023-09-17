@@ -37,7 +37,7 @@ macro_rules! block {
 }
 pub struct Tetromino {
     pub tetromino_type: TetrominoType,
-    pub blocks: [Block; 5],
+    pub blocks: [Block; 4],
     //startposition of boundingbox
     x: usize,
     y: usize,
@@ -66,7 +66,6 @@ impl Tetromino {
                     block!(0,1,Color::Red),
                     block!(1,1,Color::Red),
                     block!(2,1,Color::Red),
-                    block!(3,1,Color::Red)
                 ],
                 x: 0,
                 y: 0,
