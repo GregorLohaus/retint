@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 arr_macro = "0.2.1"
 crossterm = "0.26.1"
+memory-stats = "1.1.0"
 nalgebra = "0.32.2"
 rand = "0.8.5"

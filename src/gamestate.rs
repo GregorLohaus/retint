@@ -40,25 +40,26 @@ impl fmt::Display for Action {
 
 pub struct State {
     pub board: [[Block; 10]; 20],
-    pub scalex: usize,
-    pub eventqueue: Vec<Action>,
+    pub scale_x: usize,
+    pub event_queue: Vec<Action>,
     // Automatic Repeat Rate:
-    // the speed at which tetrominoes move when holding down movement keys.
+    // the speed at which tetrominos move when holding down movement keys.
     pub auto_repeat_rate: Duration,
     // Delayed Auto Shift:
     // the time between the initial keypress and the start of its automatic repeat movement.
     pub delayed_auto_shit: Duration,
     pub soft_drop_step_time: Duration,
-    //last softdrop activation
-    pub lastSDA: Option<Instant>,
-    //last moveleft activation
-    pub lastMLA: Option<Instant>,
-    //last moveright activation
-    pub lastMRA: Option<Instant>,
+    pub last_soft_drop_activation: Option<Instant>,
+    pub soft_drop_active: bool,
+    pub last_move_left_activation: Option<Instant>,
+    pub move_left_active: bool,
+    pub last_move_right_activation: Option<Instant>,
+    pub move_right_active: bool,
     pub active_tetromino: Option<Tetromino>,
     pub held_tetromino: Option<Tetromino>,
     pub tetromino_x_log: Vec<usize>,
     pub last_active_tetromino_block_positions: Option<[[usize; 2]; 5]>,
+    pub fps: u64,
 }
 
 impl State {
@@ -71,18 +72,22 @@ impl State {
         }
         State {
             board,
-            scalex: 2,
-            eventqueue: vec![],
+            scale_x: 2,
+            event_queue: vec![],
             auto_repeat_rate: Duration::from_millis(0),
             delayed_auto_shit: Duration::from_millis(96),
             soft_drop_step_time: Duration::from_millis(0),
-            lastSDA: Option::None,
-            lastMLA: Option::None,
-            lastMRA: Option::None,
+            last_soft_drop_activation: Option::None,
+            soft_drop_active: false,
+            last_move_left_activation: Option::None,
+            move_left_active: false,
+            last_move_right_activation: Option::None,
+            move_right_active: false,
             active_tetromino: Option::None,
             held_tetromino: Option::None,
             last_active_tetromino_block_positions: None,
             tetromino_x_log: vec![],
+            fps: 0,
         }
     }
 

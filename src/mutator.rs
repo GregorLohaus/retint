@@ -10,15 +10,15 @@ pub fn mutate(state: &mut State, elapsed: Duration) {
     // state.scalex = 3;
     state.spawn_tetromino();
     state.tetromino_to_board();
-    for i in 0..state.eventqueue.len() {
-        match state.eventqueue[i] {
+    for i in 0..state.event_queue.len() {
+        match state.event_queue[i] {
             Action::MoveRightA => {
                 state.move_right();
-                state.lastMRA = Some(Instant::now());
+                state.last_move_right_activation = Some(Instant::now());
             }
             Action::MoveLeftA => {
                 state.move_left();
-                state.lastMLA = Some(Instant::now());
+                state.last_move_left_activation = Some(Instant::now());
             }
             _ => (),
         }

@@ -41,8 +41,6 @@ pub struct Tetromino {
     //startposition of boundingbox
     x: usize,
     y: usize,
-    xlog: Vec<usize>,
-    ylog: Vec<usize>
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -69,18 +67,14 @@ impl Tetromino {
                 ],
                 x: 0,
                 y: 0,
-                xlog: vec![],
-                ylog: vec![]
             },
         }
     }
     pub fn set_x(&mut self, x:usize) {
-        self.xlog.push(self.x);
         self.x = x;
     }
 
     pub fn set_y(&mut self, y:usize) {
-        self.ylog.push(self.y);
         self.y = y;
     }
 
